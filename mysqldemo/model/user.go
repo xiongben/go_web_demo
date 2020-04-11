@@ -13,6 +13,7 @@ type User struct {
 	address  string
 }
 
+//预编译
 func (user *User) AddUser() error {
 	sqlStr := "insert into user(username,birthday,sex,address) values(?,?,?,?)"
 	inStmt, err := utils.Db.Prepare(sqlStr)
@@ -38,14 +39,15 @@ func (user *User) AddUser2() error {
 	return nil
 }
 
-func (user *User) FindUserInfo() error {
+func (user *User) FindUserInfo() ([]User, error) {
 	sqlStr := "SELECT * FROM user"
 	rows, err := utils.Db.Query(sqlStr)
 	defer utils.Db.Close()
 	if err != nil {
 		fmt.Println("执行sql出现异常", err)
-		return err
+		return nil, err
 	}
+	var users []User
 	for rows.Next() {
 		var student User
 		err = rows.Scan(&student.id, &student.username, &student.birthday, &student.sex, &student.address)
@@ -53,7 +55,21 @@ func (user *User) FindUserInfo() error {
 			fmt.Println(err)
 			panic(err)
 		}
-		fmt.Println(student)
+		users = append(users, student)
 	}
-	return nil
+	return users, nil
+}
+
+func (user *User) GetUserById() (*User, error) {
+	sqlStr := "SELECT * FROM user where id = ?"
+	row := utils.Db.QueryRow(sqlStr, user.id)
+	defer utils.Db.Close()
+
+	var student User
+	err := row.Scan(&student.id, &student.username, &student.birthday, &student.sex, &student.address)
+	if err != nil {
+		fmt.Println("执行sql出现异常", err)
+		return nil, err
+	}
+	return &student, nil
 }
