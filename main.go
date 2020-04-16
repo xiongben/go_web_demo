@@ -3,13 +3,20 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 )
 
 func main() {
 	http.HandleFunc("/http", handler)
 	http.HandleFunc("/testjson", testJsonRes)
+	http.HandleFunc("/testtemp", testTemp)
 	http.ListenAndServe(":8080", nil)
+}
+
+func testTemp(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles("temperlate/a.html"))
+	t.Execute(w, "")
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
