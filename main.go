@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("temperlate/static/"))))
 	http.HandleFunc("/http", handler)
 	http.HandleFunc("/testjson", testJsonRes)
 	http.HandleFunc("/testtemp", testTemp)
