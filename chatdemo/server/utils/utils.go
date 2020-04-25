@@ -32,3 +32,21 @@ func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 	}
 	return
 }
+
+func (this *Transfer) WritePkg(data []byte) (err error) {
+	var pkgLen uint32
+	pkgLen = uint32(len(data))
+	binary.BigEndian.PutUint32(this.Buf[:4], pkgLen)
+	n, err := this.Conn.Write(this.Buf[:4])
+	if n != 4 && err != nil {
+		fmt.Println("conn write err = ", err)
+		return
+	}
+	//发送data本身
+	n, err = this.Conn.Write(data)
+	if n != int(pkgLen) && err != nil {
+		fmt.Println("conn write err = ", err)
+		return
+	}
+	return
+}
