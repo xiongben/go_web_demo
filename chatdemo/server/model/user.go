@@ -5,3 +5,7 @@ type User struct {
 	UserName string `json:"user_name"`
 	UserPwd  string `json:"user_pwd"`
 }
+
+type Testss struct {
+	Name string
+}

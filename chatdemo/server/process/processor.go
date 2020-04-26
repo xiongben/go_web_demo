@@ -1,9 +1,8 @@
-package main
+package process
 
 import (
 	"fmt"
 	"go_web_demo/chatdemo/common/message"
-	"go_web_demo/chatdemo/server/process"
 	"go_web_demo/chatdemo/server/utils"
 	"io"
 	"net"
@@ -13,11 +12,11 @@ type ProcessorObj struct {
 	Conn net.Conn
 }
 
-func (this *ProcessorObj) severProcessMess(mes *message.Message) (err error) {
+func (this *ProcessorObj) SeverProcessMess(mes *message.Message) (err error) {
 	fmt.Println("mes=", mes)
 	switch mes.Type {
 	case message.LoginMesType:
-		up := &process.UserProcess{
+		up := &UserProcess{
 			Conn: this.Conn,
 		}
 		err = up.ServerProcessLogin(mes)
@@ -27,7 +26,7 @@ func (this *ProcessorObj) severProcessMess(mes *message.Message) (err error) {
 	return
 }
 
-func (this *ProcessorObj) severProcess() (err error) {
+func (this *ProcessorObj) SeverProcess() (err error) {
 	for {
 		tf := &utils.Transfer{
 			Conn: this.Conn,
@@ -43,7 +42,7 @@ func (this *ProcessorObj) severProcess() (err error) {
 				return err
 			}
 		}
-		err = this.severProcessMess(&mess)
+		err = this.SeverProcessMess(&mess)
 		if err != nil {
 			return err
 		}
