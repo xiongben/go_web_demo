@@ -6,6 +6,15 @@ type User struct {
 	UserPwd  string `json:"user_pwd"`
 }
 
+type UserSql struct {
+	Id       int
+	Username string
+	Birthday string
+	Sex      string
+	Address  string
+	Password string
+}
+
 type Testss struct {
 	Name string
 }
