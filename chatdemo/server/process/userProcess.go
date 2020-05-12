@@ -14,6 +14,49 @@ type UserProcess struct {
 	UserId int
 }
 
+func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error) {
+	var registerMes message.RegisterMes
+	err = json.Unmarshal([]byte(mes.Data), &registerMes)
+	if err != nil {
+		fmt.Println("json unmashal err = ", err)
+		return
+	}
+	var resMes message.Message
+	resMes.Type = message.RegisterResMesType
+	var registerResMes message.RegisterResMes
+	//数据库操作
+	err = model.MyUserDao.Register(registerMes.User.UserId, registerMes.User.UserName, registerMes.User.UserPwd)
+	if err != nil {
+		if err == model.ERROR_USER_EXISTS {
+			registerResMes.Code = 505
+			registerResMes.Error = err.Error()
+		} else {
+			registerResMes.Code = 506
+			registerResMes.Error = "server error ..."
+		}
+	} else {
+		registerResMes.Code = 200
+	}
+
+	fmt.Println("user register success!")
+	data, err := json.Marshal(registerResMes)
+	if err != nil {
+		fmt.Println("jsonmarshal err = ", err)
+		return
+	}
+	resMes.Data = string(data)
+	data, err = json.Marshal(resMes)
+	if err != nil {
+		fmt.Println("jsonmarshal err = ", err)
+		return
+	}
+	tf := &utils.Transfer{
+		Conn: this.Conn,
+	}
+	err = tf.WritePkg(data)
+	return
+}
+
 func (this *UserProcess) ServerProcessLogin(mes *message.Message) (user model.UserSql, err error) {
 	var loginMes message.LoginMes
 	err = json.Unmarshal([]byte(mes.Data), &loginMes)

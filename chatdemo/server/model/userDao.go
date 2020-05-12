@@ -48,3 +48,19 @@ func (this *UserDao) Login(userid int, userPwd string) (user UserSql, err error)
 	}
 	return
 }
+
+func (this *UserDao) Register(userid int, username string, userPwd string) (err error) {
+	_, err = this.GetUserById(userid)
+	if err == nil {
+		err = ERROR_USER_EXISTS
+		return
+	}
+	if err != nil {
+		if err == sql.ErrNoRows {
+			_, err = this.pool.Exec("insert INTO user(id,username,password) values(?,?,?)", userid, username, userPwd)
+			return
+		}
+		return
+	}
+	return
+}
