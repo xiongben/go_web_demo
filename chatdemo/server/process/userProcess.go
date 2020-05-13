@@ -21,11 +21,15 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error)
 		fmt.Println("json unmashal err = ", err)
 		return
 	}
+	fmt.Println("===regismes===")
+	fmt.Println(registerMes)
+	fmt.Println("===regismes===")
 	var resMes message.Message
 	resMes.Type = message.RegisterResMesType
 	var registerResMes message.RegisterResMes
 	//数据库操作
 	err = model.MyUserDao.Register(registerMes.User.UserId, registerMes.User.UserName, registerMes.User.UserPwd)
+	fmt.Println("register sql err = ", err)
 	if err != nil {
 		if err == model.ERROR_USER_EXISTS {
 			registerResMes.Code = 505
@@ -36,9 +40,9 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error)
 		}
 	} else {
 		registerResMes.Code = 200
+		fmt.Println("user register success!")
 	}
 
-	fmt.Println("user register success!")
 	data, err := json.Marshal(registerResMes)
 	if err != nil {
 		fmt.Println("jsonmarshal err = ", err)
@@ -82,9 +86,9 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (user model.Us
 		}
 	} else {
 		loginResMes.Code = 200
+		fmt.Println("user login success!")
 	}
 
-	fmt.Println("user login success!")
 	data, err := json.Marshal(loginResMes)
 	if err != nil {
 		fmt.Println("jsonmarshal err = ", err)

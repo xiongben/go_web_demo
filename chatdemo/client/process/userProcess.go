@@ -1,7 +1,6 @@
 package clientprocess
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"go_web_demo/chatdemo/common/message"
@@ -34,15 +33,17 @@ func (this *UserProcess) Register(userId int, userPwd string, userName string) (
 		return
 	}
 	mes.Data = string(data)
-	data, err = json.Marshal(registerMes)
+	data, err = json.Marshal(mes)
 	if err != nil {
 		fmt.Println("json.marshal err = ", err)
 		return
 	}
+	//fmt.Println(data)
 	tf := &utils.Transfer{
 		Conn: conn,
+		Buf:  [8096]byte{},
 	}
-	tf.WritePkg(data)
+	err = tf.WritePkg(data)
 	if err != nil {
 		fmt.Println("注册信息发送错误 err = ", err)
 	}
@@ -53,6 +54,7 @@ func (this *UserProcess) Register(userId int, userPwd string, userName string) (
 	}
 	var registerResMes message.RegisterResMes
 	err = json.Unmarshal([]byte(mes.Data), &registerResMes)
+	fmt.Println(registerResMes)
 	if registerResMes.Code == 200 {
 		fmt.Println("register user success,to login")
 		os.Exit(0)
@@ -88,29 +90,35 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 		fmt.Println("json.marshal err = ", err)
 		return
 	}
-	//先发送数据长度
-	var pkgLen uint32
-	pkgLen = uint32(len(data))
-	var buf [4]byte
-	binary.BigEndian.PutUint32(buf[:4], pkgLen)
-	n, err := conn.Write(buf[:4])
-	if n != 4 || err != nil {
-		fmt.Println("conn.write byte err =", err)
-		return
-	}
-
-	//发送消息本身
-	_, err = conn.Write(data)
-	if err != nil {
-		fmt.Println("conn.write byte err =", err)
-		return
-	}
+	////先发送数据长度
+	//var pkgLen uint32
+	//pkgLen = uint32(len(data))
+	//var buf [4]byte
+	//binary.BigEndian.PutUint32(buf[:4], pkgLen)
+	//n, err := conn.Write(buf[:4])
+	//if n != 4 || err != nil {
+	//	fmt.Println("conn.write byte err =", err)
+	//	return
+	//}
+	//
+	////发送消息本身
+	//_, err = conn.Write(data)
+	//if err != nil {
+	//	fmt.Println("conn.write byte err =", err)
+	//	return
+	//}
 
 	//接收服务器返回消息部分逻辑
 	tf := &utils.Transfer{
 		Conn: conn,
 		Buf:  [8096]byte{},
 	}
+
+	err = tf.WritePkg(data)
+	if err != nil {
+		fmt.Println("net write login info error = ", err)
+	}
+
 	mes, err = tf.ReadPkg()
 	if err != nil {
 		fmt.Println("conn.read byte err =", err)

@@ -55,12 +55,6 @@ func (this *UserDao) Register(userid int, username string, userPwd string) (err 
 		err = ERROR_USER_EXISTS
 		return
 	}
-	if err != nil {
-		if err == sql.ErrNoRows {
-			_, err = this.pool.Exec("insert INTO user(id,username,password) values(?,?,?)", userid, username, userPwd)
-			return
-		}
-		return
-	}
+	_, err = this.pool.Exec("insert INTO user(id,username,password) values(?,?,?)", userid, username, userPwd)
 	return
 }

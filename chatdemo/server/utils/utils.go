@@ -14,7 +14,7 @@ type Transfer struct {
 }
 
 func (this *Transfer) ReadPkg() (mes message.Message, err error) {
-	fmt.Println("读取客户端发送的信息")
+	//fmt.Println("读取客户端发送的信息")
 	_, err = this.Conn.Read(this.Buf[:4])
 	if err != nil {
 		return
@@ -36,7 +36,7 @@ func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 func (this *Transfer) WritePkg(data []byte) (err error) {
 	var pkgLen uint32
 	pkgLen = uint32(len(data))
-	binary.BigEndian.PutUint32(this.Buf[:4], pkgLen)
+	binary.BigEndian.PutUint32(this.Buf[0:4], pkgLen)
 	n, err := this.Conn.Write(this.Buf[:4])
 	if n != 4 && err != nil {
 		fmt.Println("conn write err = ", err)
