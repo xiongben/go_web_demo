@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	clientprocess "go_web_demo/chatdemo/client/process"
+	"os"
 )
 
 var userId int
@@ -44,6 +45,7 @@ func main() {
 			//loop = false
 		case 3:
 			fmt.Println("login out")
+			os.Exit(0)
 			//loop = false
 		default:
 			fmt.Println("you put error message")
