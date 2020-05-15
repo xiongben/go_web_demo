@@ -25,6 +25,9 @@ func (this *ProcessorObj) SeverProcessMess(mes *message.Message) (err error) {
 			Conn: this.Conn,
 		}
 		err = up.ServerProcessRegister(mes)
+	case message.SmsMesType:
+		smsProcess := &SmsProcess{}
+		smsProcess.SendGroupMes(mes)
 	default:
 		fmt.Println("message type is not exit,can't deal it!")
 	}
