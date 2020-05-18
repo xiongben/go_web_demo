@@ -9,6 +9,12 @@ const (
 	SmsMesType              = "SmsMesType"
 )
 
+const (
+	UserOnline = iota
+	UserOffline
+	UserBusyStatus
+)
+
 type Message struct {
 	Type string `json:"type"`
 	Data string `json:"data"`
@@ -21,9 +27,9 @@ type LoginMes struct {
 }
 
 type LoginResMes struct {
-	Code   int    `json:"code"`
-	UserId int    `json:"user_id"`
-	Error  string `json:"error"`
+	Code    int    `json:"code"`
+	UserIds []int  `json:"user_ids"`
+	Error   string `json:"error"`
 }
 
 type RegisterMes struct {

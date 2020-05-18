@@ -126,6 +126,29 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	}
 	var loginResMes message.LoginResMes
 	err = json.Unmarshal([]byte(mes.Data), &loginResMes)
-	fmt.Println(loginResMes)
+	if loginResMes.Code == 200 {
+		CurUser.Conn = conn
+		CurUser.UserId = userId
+		CurUser.UserStatus = message.UserOnline
+		fmt.Println("show online user list :")
+		for _, v := range loginResMes.UserIds {
+			if v == userId {
+				continue
+			}
+			fmt.Println("user id:\t", v)
+			user := &message.User{
+				UserId:     v,
+				UserStatus: message.UserOnline,
+			}
+			onlineUsers[v] = user
+		}
+		fmt.Print("\n\n")
+		go serverProcessMes(conn)
+		for {
+			ShowMenu()
+		}
+	} else {
+		fmt.Println(loginResMes.Error)
+	}
 	return
 }
