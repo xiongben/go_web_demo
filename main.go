@@ -8,11 +8,19 @@ import (
 )
 
 func main() {
+	//http.Handle("/rest/user/",user2.MakeMuxer("/rest/user/"))
+
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("temperlate/static/"))))
 	http.HandleFunc("/http", handler)
 	http.HandleFunc("/testjson", testJsonRes)
 	http.HandleFunc("/testtemp", testTemp)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8089", nil)
+
+	//e := echo.New()
+	//e.GET("/", func(c echo.Context) error {
+	//	return c.String(http.StatusOK, "Hello, World!")
+	//})
+	//e.Logger.Fatal(e.Start(":1323"))
 }
 
 func testTemp(w http.ResponseWriter, r *http.Request) {
