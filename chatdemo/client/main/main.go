@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	clientprocess "go_web_demo/chatdemo/client/process"
+	"os"
 )
 
 var userId int
@@ -34,13 +35,17 @@ func main() {
 			fmt.Println("请输入用户id")
 			fmt.Scanf("%d\n", &userId)
 			fmt.Println("请输入设置密码")
-			fmt.Scanf("%d\n", &userPwd)
+			fmt.Scanf("%v\n", &userPwd)
+
 			fmt.Println("请输入用户名称")
 			fmt.Scanf("%v\n", &userName)
 
+			up := &clientprocess.UserProcess{}
+			up.Register(userId, userPwd, userName)
 			//loop = false
 		case 3:
 			fmt.Println("login out")
+			os.Exit(0)
 			//loop = false
 		default:
 			fmt.Println("you put error message")
